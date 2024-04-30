@@ -1,15 +1,30 @@
 const { Restaurant } = require('../models') // 解構賦值寫法
 
 const adminController = {
-  getRestaurants: (req, res, next) => {
-    Restaurant.findAll({
-
-      raw: true
-
+  getRestaurants: (req, res) => {
+    return Restaurant.findAll({ raw: true }).then(restaurants => {
+      return res.render('admin/restaurants', { restaurants: restaurants })
     })
+  },
+  // 新增這個
+  createRestaurant: (req, res) => {
+    return res.render('admin/create-restaurant')
+  },
 
-      .then(restaurants => res.render('admin/restaurants', { restaurants }))
-
+  postRestaurant: (req, res, next) => {
+    const { name, tel, address, openingHours, description } = req.body // 從 req.body 拿出表單裡的資料
+    if (!name) throw new Error('Restaurant name is required!') // name 是必填，若發先是空值就會在後端終止程式碼，並在畫面顯示錯誤提示 (若在browser把前端require字樣拿掉，表單還是可以送出)
+    Restaurant.create({ // 產生一個新的 Restaurant 物件實例，並存入資料庫
+      name,
+      tel,
+      address,
+      openingHours,
+      description
+    })
+      .then(() => {
+        req.flash('success_messages', 'restaurant was successfully created') // 在畫面顯示成功提示
+        res.redirect('/admin/restaurants') // 新增完成後導回後台首頁
+      })
       .catch(err => next(err))
   }
 }
