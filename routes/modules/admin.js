@@ -6,6 +6,8 @@ const adminController = require('../../controllers/admin-controller')
 
 const upload = require('../../middleware/multer') // 載入 multer
 
+router.get('/users', adminController.getUsers) // 路由到管理使用者的頁面
+router.patch('/users/:id', adminController.patchUser)
 router.get('/restaurants/create', adminController.createRestaurant)
 router.get('/restaurants/:id/edit', adminController.editRestaurant)
 router.get('/restaurants/:id', adminController.getRestaurant)

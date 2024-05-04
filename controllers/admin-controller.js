@@ -1,4 +1,4 @@
-const { Restaurant } = require('../models') // 解構賦值寫法
+const { Restaurant, User } = require('../models') // 解構賦值寫法，加上User
 const { localFileHandler } = require('../helpers/file-helpers') // 將 file-helper 載進來
 
 const adminController = {
@@ -87,6 +87,40 @@ const adminController = {
         return restaurant.destroy()
       })
       .then(() => res.redirect('/admin/restaurants'))
+      .catch(err => next(err))
+  },
+
+  getUsers: (req, res, next) => {
+    // res.render('admin/users')
+    return User.findAll({ raw: true })
+      .then(users => {
+        return res.render('admin/users', { users })
+      })
+  },
+
+  patchUser: (req, res, next) => {
+    const id = req.params.id
+    return User.findByPk(id)
+      .then(user => {
+        if (!user) {
+          throw new Error("User didn't exist!")
+        }
+        if (user.email === 'root@example.com') {
+          req.flash('error_messages', '禁止變更 root 權限')
+          return res.redirect('back')
+        }
+
+        return user.update(
+          { isAdmin: !user.isAdmin },
+          { where: { id: user.id } }
+        )
+      })
+
+      .then(() => {
+        req.flash('success_messages', '使用者權限變更成功')
+        return res.redirect('/admin/users')
+      })
+
       .catch(err => next(err))
   }
 }
