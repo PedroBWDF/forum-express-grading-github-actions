@@ -110,7 +110,7 @@ const adminController = {
           return res.redirect('back')
         }
 
-        return User.update(
+        return user.update(
           { isAdmin: !user.isAdmin },
           { where: { id: user.id } }
         )
