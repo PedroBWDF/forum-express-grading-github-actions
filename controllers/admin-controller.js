@@ -1,11 +1,16 @@
-const { Restaurant, User } = require('../models') // 解構賦值寫法，加上User
+const { Restaurant, User, Category } = require('../models') // 解構賦值寫法，加上User
 const { localFileHandler } = require('../helpers/file-helpers') // 將 file-helper 載進來
 
 const adminController = {
   getRestaurants: (req, res) => {
-    return Restaurant.findAll({ raw: true }).then(restaurants => {
-      return res.render('admin/restaurants', { restaurants: restaurants })
+    return Restaurant.findAll({
+      raw: true,
+      nest: true, // 增加這裡
+      include: [Category] // 增加這裡
     })
+      .then(restaurants => {
+        return res.render('admin/restaurants', { restaurants: restaurants })
+      })
   },
   // 新增這個
   createRestaurant: (req, res) => {
@@ -34,7 +39,9 @@ const adminController = {
 
   getRestaurant: (req, res, next) => {
     Restaurant.findByPk(req.params.id, { // 去資料庫用 id 找一筆資料
-      raw: true // 找到以後整理格式再回傳
+      raw: true, // 找到以後整理格式再回傳
+      nest: true,
+      include: [Category] 
     })
       .then(restaurant => {
         if (!restaurant) throw new Error("Restaurant didn't exist!") //  如果找不到，回傳錯誤訊息，後面不執行
@@ -110,7 +117,7 @@ const adminController = {
           return res.redirect('back')
         }
 
-        return User.update(
+        return user.update(
           { isAdmin: !user.isAdmin },
           { where: { id: user.id } }
         )
