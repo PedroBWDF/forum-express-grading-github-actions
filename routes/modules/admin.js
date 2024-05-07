@@ -4,9 +4,12 @@ const router = express.Router()
 const adminController = require('../../controllers/admin-controller')
 // const { authenticatedAdmin } = require('../../middleware/auth') // 引入 auth.js
 
+const categoryController = require('../../controllers/category-controller')
+
 const upload = require('../../middleware/multer') // 載入 multer
 
 router.get('/users', adminController.getUsers) // 路由到管理使用者的頁面
+router.get('/categories', categoryController.getCategories)
 router.patch('/users/:id', adminController.patchUser)
 router.get('/restaurants/create', adminController.createRestaurant)
 router.get('/restaurants/:id/edit', adminController.editRestaurant)
