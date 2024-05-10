@@ -1,4 +1,4 @@
-const { Restaurant, Category } = require('../models')
+const { Restaurant, Category, Comment, User } = require('../models')
 const { getOffset, getPagination } = require('../helpers/pagination-helper')
 
 const restaurantController = {
@@ -39,7 +39,9 @@ const restaurantController = {
 
   getRestaurant: (req, res, next) => {
     return Restaurant.findByPk(req.params.id, {
-      include: Category // 拿出關聯的 Category model
+      include: [Category,
+        { model: Comment, include: User }
+      ] // 拿出跟餐廳關聯的 Category model、跟餐廳關聯的comment model、跟comment關聯的user model
       // nest: true,
       // raw: true
     })
