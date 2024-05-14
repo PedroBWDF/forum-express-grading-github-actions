@@ -7,9 +7,22 @@
     <div class="col-md-8">
       <div class="card-body">
         <h5 class="card-title">{{user.name}}</h5>
-        <p class="card-text">{{user.email}}</p>
+        <h6 class="card-text">{{user.email}}</h6>
+        <h6> {{commentData.length}}已評論餐廳</h6>
         <a href="/users/{{user.id}}/edit" class="btn btn-primary">Edit</a>
       </div>
     </div>
   </div>
+  <div>
+    <div>
+      <h6>{{commentData.length}}已評論餐廳</h6>
+    </div>
+    <div style="background: white; height: auto" class="d-flex flex-row bd-highlight mb-3 align-items-center flex-wrap">
+      {{#each user.Comments}}
+      <a href="/restaurants/{{this.Restaurant.id}}">
+        <img src="{{this.Restaurant.image}}" class="img-thumbnail ms-1"
+          style="max-width: 100px; max-height: 100px;" alt="{{this.Restaurant.name}}">
+      </a>
+      {{/each}}
+      </div>
 </div>

@@ -1,6 +1,5 @@
 const bcrypt = require('bcryptjs') // 載入 bcrypt
-// const db = require('../models')
-const { User } = require('../models')
+const { User, Comment, Restaurant } = require('../models')
 
 const { localFileHandler } = require('../helpers/file-helpers') // 讓程式邏輯可以把image檔案傳到 file-helper 處理
 
@@ -45,11 +44,17 @@ const userController = {
     res.redirect('/signin')
   },
   getUser: (req, res, next) => {
-    return User.findByPk(req.params.id)
+    return User.findByPk(req.params.id, {
+      include: [
+        { model: Comment, include: Restaurant }
+      ]
+    })
 
       .then(user => {
+        // console.log(user.Comments[0].dataValues)
+        const commentData = user.Comments ? user.Comments : []
         if (!user) throw new Error("User didn't exist!")
-        res.render('users/profile', { user: user.toJSON() })
+        res.render('users/profile', { user: user.toJSON(), commentData })
       })
   },
 
@@ -63,7 +68,7 @@ const userController = {
   },
 
   putUser: (req, res, next) => {
-    if (Number(req.params.id) !== Number(req.user.id)) {
+    if (Number(req.params.id) !== Number(req.user.id)) { // 確保編輯功能是登入該帳號的user
       res.redirect(`/users/${req.params.id}`)
     }
 

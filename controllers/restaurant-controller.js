@@ -43,9 +43,9 @@ const restaurantController = {
         { model: Comment, include: User }
       ] // 拿出跟餐廳關聯的 Category model、跟餐廳關聯的comment model、跟comment關聯的user model
       // nest: true,
-      // raw: true
     })
       .then(restaurant => {
+        // console.log(restaurant)
         if (!restaurant) throw new Error("Restaurant didn't exist!")
         return restaurant.increment('viewCount')
       })
