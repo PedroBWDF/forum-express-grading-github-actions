@@ -24,10 +24,13 @@ const restaurantController = {
     ])
       .then(([restaurants, categories]) => {
         const favoritedRestaurantsId = req.user && req.user.FavoritedRestaurants.map(fr => fr.id)
+        const likedRestaurantsId = req.user && req.user.LikedRestaurants.map(lr => lr.id) // model定義的餐廳跟使用者關係為LikedRestaurants，passport反序列方法沿用此名稱，這邊再用req.user取出對應的資料
+
         const data = restaurants.rows.map(r => ({
           ...r,
           description: r.description.substring(0, 50),
-          isFavorited: favoritedRestaurantsId.includes(r.id) // 回傳true或false再傳給hbs執行條件判斷
+          isFavorited: favoritedRestaurantsId.includes(r.id), // 是否包含餐廳的id，回傳true或false再傳給hbs執行條件判斷
+          isLiked: likedRestaurantsId.includes(r.id)
         }))
         return res.render('restaurants', {
           restaurants: data,
@@ -43,7 +46,8 @@ const restaurantController = {
     return Restaurant.findByPk(req.params.id, {
       include: [Category,
         { model: Comment, include: User }, // 拿出跟餐廳關聯的 Category model、跟餐廳關聯的comment model、跟comment關聯的user model
-        { model: User, as: 'FavoritedUsers' }
+        { model: User, as: 'FavoritedUsers' },
+        { model: User, as: 'LikedUsers' }
       ]
       // nest: true,
     })
@@ -54,7 +58,8 @@ const restaurantController = {
       })
       .then(restaurant => {
         const isFavorited = restaurant.FavoritedUsers.some(f => f.id === req.user.id) // 比對有收藏該餐廳的user是否等於當前登入的user
-        res.render('restaurant', { restaurant: restaurant.toJSON(), isFavorited })
+        const isLiked = restaurant.LikedUsers.some(l => l.id === req.user.id)
+        res.render('restaurant', { restaurant: restaurant.toJSON(), isFavorited, isLiked })
       })
       .catch(err => next(err))
   },
