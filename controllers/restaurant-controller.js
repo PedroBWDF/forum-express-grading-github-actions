@@ -27,7 +27,7 @@ const restaurantController = {
         const data = restaurants.rows.map(r => ({
           ...r,
           description: r.description.substring(0, 50),
-          isFavorited: favoritedRestaurantsId.includes(r.id)
+          isFavorited: favoritedRestaurantsId.includes(r.id) // 回傳true或false再傳給hbs執行條件判斷
         }))
         return res.render('restaurants', {
           restaurants: data,
@@ -53,7 +53,7 @@ const restaurantController = {
         return restaurant.increment('viewCount')
       })
       .then(restaurant => {
-        const isFavorited = restaurant.FavoritedUsers.some(f => f.id === req.user.id)
+        const isFavorited = restaurant.FavoritedUsers.some(f => f.id === req.user.id) // 比對有收藏該餐廳的user是否等於當前登入的user
         res.render('restaurant', { restaurant: restaurant.toJSON(), isFavorited })
       })
       .catch(err => next(err))
