@@ -35,6 +35,7 @@ router.put('/users/:id', authenticated, upload.single('image'), userController.p
 
 router.get('/restaurants/feeds', authenticated, restController.getFeeds) // 要放在restaurants/:id上面，不然feeds會被當成:id來解析
 
+router.get('/restaurants/top', authenticated, restController.getTopRestaurants)
 router.get('/restaurants/:id/dashboard', restController.getDashboard)
 router.get('/restaurants/:id', authenticated, restController.getRestaurant)
 router.get('/restaurants', authenticated, restController.getRestaurants) // 修改這行，新增 authenticated 參數
